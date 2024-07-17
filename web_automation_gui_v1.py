@@ -17,18 +17,15 @@ def start_process():
     start_row = int(entry_start_row.get())
     end_row = int(entry_end_row.get())
 
-    # Set up Edge options
     options = webdriver.EdgeOptions()
     options.add_argument("--disable-notifications")
     driver = webdriver.Edge(options=options)
     driver.maximize_window()
 
-    url = "http://10.18.3.93/satusehat.simrs/"
+    url = ""
     driver.implicitly_wait(10)
     driver.get(url)
 
-    # Filter tanggal
-    # Form date
     from_date_field = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//td[@width='35%']//input[@id='fromDate']"))
     )
@@ -36,7 +33,6 @@ def start_process():
     from_date_field.send_keys(from_date)
     time.sleep(2)
 
-    # To date
     to_date_field = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//td[@width='45%']//input[@id='toDate']"))
     )
@@ -45,9 +41,7 @@ def start_process():
     time.sleep(2)
     to_date_field.send_keys(Keys.ENTER)
     time.sleep(2)
-    # End filter tanggal
 
-    # start dropdown
     select_status = WebDriverWait(driver, 10).until(
     EC.element_to_be_clickable((By.CSS_SELECTOR, "select#status"))
     )
@@ -66,7 +60,6 @@ def start_process():
     select_filter.click()
     time.sleep(5)
 
-    # Input nilai dari pengguna ke dalam input box
     input_box = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.XPATH, "//input[@class='ui-pg-input ui-corner-all']"))
     )
@@ -76,16 +69,13 @@ def start_process():
 
     input_box.send_keys(Keys.ENTER)
     time.sleep(7)
-    # End input nilai
     
-    # bagian sorting NIK
     sorting_nik = WebDriverWait(driver, 10).until(
         EC.element_to_be_clickable((By.CSS_SELECTOR, "th#jqGrid_NIK.ui-th-column.ui-th-ltr.ui-state-default.ui-sortable-handle"))
     )
     sorting_nik.click()
     time.sleep(5)
 
-    # Add 10-second delay before starting the loop
     time.sleep(10)
 
     for row_id in range(start_row, end_row + 1):
@@ -94,9 +84,8 @@ def start_process():
                 EC.element_to_be_clickable((By.XPATH, f"//button[@class='btn-satusehat' and @id='openBundleButton ' and @data-rowid='{row_id}']"))
             )
             button_1.click()
-            time.sleep(5)  # Delay 5 seconds after clicking button_1
+            time.sleep(5)
 
-            # Combine condition not_found, not_valid, dan parsing json
             try:
                 combined_dialog = WebDriverWait(driver, 5).until(
                     EC.visibility_of_element_located((By.XPATH, "//span[@id='ui-id-1' and (contains(text(), 'Not_found') or contains(text(), 'Not_valid') or contains(text(), 'Error'))]"))
@@ -110,8 +99,6 @@ def start_process():
             except:
                 pass
 
-            # Condition normally
-            # Isi data
             nadi_value = random.randint(60, 65)
             pernafasan_value = random.randint(22, 26)
             suhu_tubuh_value = round(random.uniform(35.8, 36.2), 1)
@@ -141,7 +128,6 @@ def start_process():
             field_kesadaran.clear()
             field_kesadaran.send_keys(kesadaran_value)
 
-            # Lanjutkan dengan button_2
             button_2 = WebDriverWait(driver, 5).until(
                 EC.element_to_be_clickable((By.XPATH, "//button[@class='btn-send' and @id='send-bundle' and @name='send-bundle']"))
             )
@@ -157,11 +143,9 @@ def start_process():
         except Exception as e:
             print(f"Error processing row_id {row_id}: {e}")
 
-    # Browser Edge tidak ditutup secara otomatis
     print("Skrip selesai dijalankan.")
     messagebox.showinfo("Info", "Skrip selesai dijalankan.")
 
-# Membuat GUI dengan tkinter
 root = tk.Tk()
 root.title("Web Automation Satu Sehat")
 
@@ -192,7 +176,6 @@ entry_end_row.grid(row=5, column=1, padx=10, pady=5)
 start_button = tk.Button(root, text="Start", command=start_process)
 start_button.grid(row=8, columnspan=5, pady=20)
 
-# Tambahkan label copyright
 tk.Label(root, text="Copyright IT RSU UMM .v1").grid(row=6, columnspan=5, pady=10)
 
 root.mainloop()
